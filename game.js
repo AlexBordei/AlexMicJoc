@@ -116,10 +116,10 @@ let mobileButtonPressed = null;
 let pressedButtonId = null;
 let pressedButtonTimer = 0;
 const mobileButtons = [
-    { id: 'left',    x: 15,  y: H - 115, w: 60, h: 60, label: '\u25C0' },
-    { id: 'right',   x: 85,  y: H - 115, w: 60, h: 60, label: '\u25B6' },
-    { id: 'jump',    x: W - 80, y: H - 140, w: 65, h: 58, label: '\u25B2' },
-    { id: 'slide',   x: W - 80, y: H - 72,  w: 65, h: 58, label: '\u25BC' }
+    { id: 'left',    x: 15,  y: H - 115, w: 60, h: 60, dir: 'left' },
+    { id: 'right',   x: 85,  y: H - 115, w: 60, h: 60, dir: 'right' },
+    { id: 'jump',    x: W - 80, y: H - 140, w: 65, h: 58, dir: 'up' },
+    { id: 'slide',   x: W - 80, y: H - 72,  w: 65, h: 58, dir: 'down' }
 ];
 
 function handleMobileButton(id) {
@@ -1034,8 +1034,8 @@ function drawCharacterSelect() {
     ctx.fillText(char.specialDesc, W / 2, 467);
 
     // Navigation arrows (same style as in-game mobile buttons)
-    drawStyledButton(10, 210, 50, 50, '\u25C0', false);
-    drawStyledButton(W - 60, 210, 50, 50, '\u25B6', false);
+    drawStyledButton(10, 210, 50, 50, 'left', false);
+    drawStyledButton(W - 60, 210, 50, 50, 'right', false);
 
     // Dots for character index
     for (let i = 0; i < characters.length; i++) {
@@ -1599,7 +1599,7 @@ function drawHUD() {
     drawMobileButtons();
 }
 
-function drawStyledButton(x, y, w, h, label, pressed) {
+function drawStyledButton(x, y, w, h, dir, pressed) {
     ctx.globalAlpha = pressed ? 0.6 : 0.3;
     ctx.fillStyle = pressed ? '#FFF' : '#000';
     roundRect(x, y, w, h, 14);
@@ -1611,11 +1611,24 @@ function drawStyledButton(x, y, w, h, label, pressed) {
     roundRect(x, y, w, h, 14);
     ctx.stroke();
 
+    // Draw triangle arrow, rotated by direction
     ctx.globalAlpha = pressed ? 1 : 0.7;
     ctx.fillStyle = '#FFF';
-    ctx.font = 'bold 22px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(label, x + w / 2, y + h / 2 + 8);
+    const cx = x + w / 2;
+    const cy = y + h / 2;
+    const sz = Math.min(w, h) * 0.3;
+    const angles = { up: 0, right: Math.PI / 2, down: Math.PI, left: -Math.PI / 2 };
+    const angle = angles[dir] || 0;
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(angle);
+    ctx.beginPath();
+    ctx.moveTo(0, -sz);
+    ctx.lineTo(sz * 0.8, sz * 0.5);
+    ctx.lineTo(-sz * 0.8, sz * 0.5);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
     ctx.globalAlpha = 1;
 }
 
@@ -1626,7 +1639,7 @@ function drawMobileButtons() {
 
     for (const btn of mobileButtons) {
         const isPressed = (btn.id === pressedButtonId && pressedButtonTimer > 0);
-        drawStyledButton(btn.x, btn.y, btn.w, btn.h, btn.label, isPressed);
+        drawStyledButton(btn.x, btn.y, btn.w, btn.h, btn.dir, isPressed);
     }
 }
 
