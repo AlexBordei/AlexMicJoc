@@ -221,12 +221,17 @@ canvas.addEventListener('touchend', (e) => {
             // Swipe left/right = change character
             if (dx > 0) selectedCharIdx = (selectedCharIdx + 1) % characters.length;
             else selectedCharIdx = (selectedCharIdx - 1 + characters.length) % characters.length;
-        } else if (dy < -SWIPE_THRESHOLD) {
-            // Swipe up = start game
-            startGame();
         } else if (dt < 300) {
-            // Tap on START button area
-            if (endX > W / 2 - 80 && endX < W / 2 + 80 && endY > 520 && endY < 570) {
+            // Tap on left arrow
+            if (endX < 60 && endY > 210 && endY < 260) {
+                selectedCharIdx = (selectedCharIdx - 1 + characters.length) % characters.length;
+            }
+            // Tap on right arrow
+            else if (endX > W - 60 && endY > 210 && endY < 260) {
+                selectedCharIdx = (selectedCharIdx + 1) % characters.length;
+            }
+            // Tap on START button
+            else if (endX > W / 2 - 80 && endX < W / 2 + 80 && endY > 520 && endY < 570) {
                 startGame();
             }
         }
@@ -265,8 +270,16 @@ canvas.addEventListener('click', (e) => {
         return;
     }
     if (state === GameState.CHARACTER_SELECT) {
-        // Play button area
-        if (mx > W / 2 - 80 && mx < W / 2 + 80 && my > 520 && my < 570) {
+        // Left arrow
+        if (mx < 60 && my > 210 && my < 260) {
+            selectedCharIdx = (selectedCharIdx - 1 + characters.length) % characters.length;
+        }
+        // Right arrow
+        else if (mx > W - 60 && my > 210 && my < 260) {
+            selectedCharIdx = (selectedCharIdx + 1) % characters.length;
+        }
+        // Play button
+        else if (mx > W / 2 - 80 && mx < W / 2 + 80 && my > 520 && my < 570) {
             startGame();
         }
         return;
@@ -1020,6 +1033,10 @@ function drawCharacterSelect() {
     ctx.font = '13px Segoe UI, sans-serif';
     ctx.fillText(char.specialDesc, W / 2, 467);
 
+    // Navigation arrows (same style as in-game mobile buttons)
+    drawStyledButton(10, 210, 50, 50, '\u25C0', false);
+    drawStyledButton(W - 60, 210, 50, 50, '\u25B6', false);
+
     // Dots for character index
     for (let i = 0; i < characters.length; i++) {
         ctx.fillStyle = i === selectedCharIdx ? '#FFD700' : 'rgba(255,255,255,0.3)';
@@ -1070,13 +1087,11 @@ function drawCharacterSelect() {
         ctx.globalAlpha = 1;
     }
 
-    // Swipe legend
-    const legendY = 645;
-    ctx.fillStyle = 'rgba(255,255,255,0.25)';
-    ctx.font = '12px Segoe UI, sans-serif';
+    // Instructions
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.font = '11px Segoe UI, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('\u25C0 Swipe stanga / dreapta \u25B6  =  Schimba personaj', W / 2, legendY);
-    ctx.fillText('\u25B2 Swipe sus  =  START', W / 2, legendY + 18);
+    ctx.fillText('Sageti / swipe = schimba  |  Enter / tap = START', W / 2, 660);
 }
 
 // ============================================================
@@ -1584,6 +1599,26 @@ function drawHUD() {
     drawMobileButtons();
 }
 
+function drawStyledButton(x, y, w, h, label, pressed) {
+    ctx.globalAlpha = pressed ? 0.6 : 0.3;
+    ctx.fillStyle = pressed ? '#FFF' : '#000';
+    roundRect(x, y, w, h, 14);
+    ctx.fill();
+
+    ctx.globalAlpha = pressed ? 0.9 : 0.5;
+    ctx.strokeStyle = '#FFF';
+    ctx.lineWidth = pressed ? 3 : 2;
+    roundRect(x, y, w, h, 14);
+    ctx.stroke();
+
+    ctx.globalAlpha = pressed ? 1 : 0.7;
+    ctx.fillStyle = '#FFF';
+    ctx.font = 'bold 22px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(label, x + w / 2, y + h / 2 + 8);
+    ctx.globalAlpha = 1;
+}
+
 function drawMobileButtons() {
     // Decay pressed button timer
     if (pressedButtonTimer > 0) pressedButtonTimer--;
@@ -1591,28 +1626,8 @@ function drawMobileButtons() {
 
     for (const btn of mobileButtons) {
         const isPressed = (btn.id === pressedButtonId && pressedButtonTimer > 0);
-
-        // Button background
-        ctx.globalAlpha = isPressed ? 0.6 : 0.3;
-        ctx.fillStyle = isPressed ? '#FFF' : '#000';
-        roundRect(btn.x, btn.y, btn.w, btn.h, 14);
-        ctx.fill();
-
-        // Button border
-        ctx.globalAlpha = isPressed ? 0.9 : 0.5;
-        ctx.strokeStyle = '#FFF';
-        ctx.lineWidth = isPressed ? 3 : 2;
-        roundRect(btn.x, btn.y, btn.w, btn.h, 14);
-        ctx.stroke();
-
-        // Button icon
-        ctx.globalAlpha = isPressed ? 1 : 0.7;
-        ctx.fillStyle = '#FFF';
-        ctx.font = 'bold 22px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText(btn.label, btn.x + btn.w / 2, btn.y + btn.h / 2 + 8);
+        drawStyledButton(btn.x, btn.y, btn.w, btn.h, btn.label, isPressed);
     }
-    ctx.globalAlpha = 1;
 }
 
 // ============================================================
