@@ -55,7 +55,7 @@ const characters = [
     { name: 'Dani', fullName: 'Dani Otil', color: '#3498DB', trait: 'Umorul', special: 'Scut', specialDesc: 'Invincibil temporar', img: 'img/dani.png', width: 45, height: 45 },
     { name: 'Cuza', fullName: 'Cuza', color: '#2ECC71', trait: 'Energia', special: 'Super Salt', specialDesc: 'Sare mult mai sus', img: 'img/cuza.png', width: 40, height: 40 },
     { name: 'Ristei', fullName: 'Florin Ristei', color: '#9B59B6', trait: 'Talentul', special: 'Slow Motion', specialDesc: 'Incetineste totul', img: 'img/ristei.png', width: 45, height: 45 },
-    { name: 'Bucatar', fullName: 'Bucatarul', color: '#E67E22', trait: 'Gustul', special: 'Festin', specialDesc: 'Coins valoreaza dublu', img: 'img/bucatar.png', width: 48, height: 48 },
+    { name: 'Bucatar', fullName: 'Catalin Rizea', color: '#E67E22', trait: 'Gustul', special: 'Festin', specialDesc: 'Coins valoreaza dublu', img: 'img/bucatar.png', width: 48, height: 48 },
     { name: 'Bucalae', fullName: 'Bucalae', color: '#C0392B', trait: 'Forta', special: 'Zdrobire', specialDesc: 'Distruge obstacole', img: 'img/bucalae.png', width: 42, height: 42 }
 ];
 
