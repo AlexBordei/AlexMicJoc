@@ -221,7 +221,18 @@ canvas.addEventListener('touchend', (e) => {
             if (dx > 0) selectedCharIdx = (selectedCharIdx + 1) % characters.length;
             else selectedCharIdx = (selectedCharIdx - 1 + characters.length) % characters.length;
         } else if (dt < 300) {
-            startGame();
+            // Tap on left arrow area
+            if (endX < 60 && endY > 200 && endY < 400) {
+                selectedCharIdx = (selectedCharIdx - 1 + characters.length) % characters.length;
+            }
+            // Tap on right arrow area
+            else if (endX > W - 60 && endY > 200 && endY < 400) {
+                selectedCharIdx = (selectedCharIdx + 1) % characters.length;
+            }
+            // Tap on START button area
+            else if (endX > W / 2 - 80 && endX < W / 2 + 80 && endY > 520 && endY < 570) {
+                startGame();
+            }
         }
         return;
     }
