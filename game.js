@@ -217,20 +217,16 @@ canvas.addEventListener('touchend', (e) => {
         return;
     }
     if (state === GameState.CHARACTER_SELECT) {
-        if (Math.abs(dx) > SWIPE_THRESHOLD) {
+        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > SWIPE_THRESHOLD) {
+            // Swipe left/right = change character
             if (dx > 0) selectedCharIdx = (selectedCharIdx + 1) % characters.length;
             else selectedCharIdx = (selectedCharIdx - 1 + characters.length) % characters.length;
+        } else if (dy < -SWIPE_THRESHOLD) {
+            // Swipe up = start game
+            startGame();
         } else if (dt < 300) {
-            // Tap on left arrow area
-            if (endX < 60 && endY > 200 && endY < 400) {
-                selectedCharIdx = (selectedCharIdx - 1 + characters.length) % characters.length;
-            }
-            // Tap on right arrow area
-            else if (endX > W - 60 && endY > 200 && endY < 400) {
-                selectedCharIdx = (selectedCharIdx + 1) % characters.length;
-            }
             // Tap on START button area
-            else if (endX > W / 2 - 80 && endX < W / 2 + 80 && endY > 520 && endY < 570) {
+            if (endX > W / 2 - 80 && endX < W / 2 + 80 && endY > 520 && endY < 570) {
                 startGame();
             }
         }
@@ -269,16 +265,8 @@ canvas.addEventListener('click', (e) => {
         return;
     }
     if (state === GameState.CHARACTER_SELECT) {
-        // Left arrow area
-        if (mx < 60 && my > 200 && my < 400) {
-            selectedCharIdx = (selectedCharIdx - 1 + characters.length) % characters.length;
-        }
-        // Right arrow area
-        else if (mx > W - 60 && my > 200 && my < 400) {
-            selectedCharIdx = (selectedCharIdx + 1) % characters.length;
-        }
         // Play button area
-        else if (mx > W / 2 - 80 && mx < W / 2 + 80 && my > 520 && my < 570) {
+        if (mx > W / 2 - 80 && mx < W / 2 + 80 && my > 520 && my < 570) {
             startGame();
         }
         return;
@@ -1032,29 +1020,6 @@ function drawCharacterSelect() {
     ctx.font = '13px Segoe UI, sans-serif';
     ctx.fillText(char.specialDesc, W / 2, 467);
 
-    // Navigation arrows (styled like mobile game buttons)
-    const arrowBtns = [
-        { x: 10, y: 210, w: 50, h: 50, label: '\u25C0' },
-        { x: W - 60, y: 210, w: 50, h: 50, label: '\u25B6' }
-    ];
-    for (const ab of arrowBtns) {
-        ctx.globalAlpha = 0.3;
-        ctx.fillStyle = '#000';
-        roundRect(ab.x, ab.y, ab.w, ab.h, 14);
-        ctx.fill();
-        ctx.globalAlpha = 0.5;
-        ctx.strokeStyle = '#FFF';
-        ctx.lineWidth = 2;
-        roundRect(ab.x, ab.y, ab.w, ab.h, 14);
-        ctx.stroke();
-        ctx.globalAlpha = 0.7;
-        ctx.fillStyle = '#FFF';
-        ctx.font = 'bold 22px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText(ab.label, ab.x + ab.w / 2, ab.y + ab.h / 2 + 8);
-    }
-    ctx.globalAlpha = 1;
-
     // Dots for character index
     for (let i = 0; i < characters.length; i++) {
         ctx.fillStyle = i === selectedCharIdx ? '#FFD700' : 'rgba(255,255,255,0.3)';
@@ -1105,10 +1070,13 @@ function drawCharacterSelect() {
         ctx.globalAlpha = 1;
     }
 
-    // Instructions
-    ctx.fillStyle = 'rgba(255,255,255,0.35)';
-    ctx.font = '11px Segoe UI, sans-serif';
-    ctx.fillText('Sageti / swipe = schimba  |  Enter / click = START', W / 2, 660);
+    // Swipe legend
+    const legendY = 645;
+    ctx.fillStyle = 'rgba(255,255,255,0.25)';
+    ctx.font = '12px Segoe UI, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('\u25C0 Swipe stanga / dreapta \u25B6  =  Schimba personaj', W / 2, legendY);
+    ctx.fillText('\u25B2 Swipe sus  =  START', W / 2, legendY + 18);
 }
 
 // ============================================================
