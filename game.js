@@ -1032,11 +1032,28 @@ function drawCharacterSelect() {
     ctx.font = '13px Segoe UI, sans-serif';
     ctx.fillText(char.specialDesc, W / 2, 467);
 
-    // Navigation arrows (bigger, bolder)
-    ctx.fillStyle = 'rgba(255,255,255,0.7)';
-    ctx.font = 'bold 50px sans-serif';
-    ctx.fillText('<', 30, 230);
-    ctx.fillText('>', W - 30, 230);
+    // Navigation arrows (styled like mobile game buttons)
+    const arrowBtns = [
+        { x: 10, y: 210, w: 50, h: 50, label: '\u25C0' },
+        { x: W - 60, y: 210, w: 50, h: 50, label: '\u25B6' }
+    ];
+    for (const ab of arrowBtns) {
+        ctx.globalAlpha = 0.3;
+        ctx.fillStyle = '#000';
+        roundRect(ab.x, ab.y, ab.w, ab.h, 14);
+        ctx.fill();
+        ctx.globalAlpha = 0.5;
+        ctx.strokeStyle = '#FFF';
+        ctx.lineWidth = 2;
+        roundRect(ab.x, ab.y, ab.w, ab.h, 14);
+        ctx.stroke();
+        ctx.globalAlpha = 0.7;
+        ctx.fillStyle = '#FFF';
+        ctx.font = 'bold 22px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(ab.label, ab.x + ab.w / 2, ab.y + ab.h / 2 + 8);
+    }
+    ctx.globalAlpha = 1;
 
     // Dots for character index
     for (let i = 0; i < characters.length; i++) {
